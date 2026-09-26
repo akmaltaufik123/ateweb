@@ -107,12 +107,12 @@ body {
 
 .anim-fade-down {
   animation-name: fade-down;
-  animation-duration: 900ms;
+  animation-duration: 700ms;
 }
 
 .anim-fade-left {
   animation-name: fade-left;
-  animation-duration: 900ms;
+  animation-duration: 800ms;
 }
 
 .anim-fade-right {

@@ -12,7 +12,7 @@ const AXIS_LABELS = ['00:00', '06:00', '12:00', '18:00', '24:00'];
 export default function GatewayCard() {
   return (
     <div
-      className="anim anim-fade-scale w-full max-w-[405px] rounded-[24px] border border-white/10 bg-[rgba(17,16,15,0.35)] p-[20px] backdrop-blur-[20px] sm:rounded-[33px] sm:px-[32px] sm:pb-[24px] sm:pt-[32px]"
+      className="anim anim-fade-scale w-full max-w-[405px] rounded-[24px] border border-white/[0.08] bg-[rgba(17,16,15,0.35)] p-[20px] backdrop-blur-[20px] sm:rounded-[33px] sm:px-[32px] sm:pb-[24px] sm:pt-[32px]"
       style={{ animationDelay: '900ms' }}
     >
       <div className="flex items-start justify-between gap-3">
@@ -24,7 +24,7 @@ export default function GatewayCard() {
             AI API Infrastructure
           </p>
         </div>
-        <span className="shrink-0 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[10px] font-semibold tracking-[0.22em] text-white/80">
+        <span className="shrink-0 rounded-full border border-white/10 bg-white/[0.06] px-3 py-1 text-[10px] font-semibold tracking-[0.22em] text-white/80">
           DEVELOPMENT
         </span>
       </div>
