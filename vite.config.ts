@@ -5,14 +5,23 @@ import { defineConfig } from 'vite';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// GitHub Pages: https://akmaltaufik123.github.io/ateweb/
-// Assets must resolve under /ateweb/, never domain root.
+// Use /ateweb/ base for GitHub Pages, / for Express server deployment
+const isGitHubPages = process.env.GITHUB_PAGES === 'true';
+
 export default defineConfig({
-  base: '/ateweb/',
+  base: isGitHubPages ? '/ateweb/' : '/',
   plugins: [react()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+    },
+  },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+      },
     },
   },
 });

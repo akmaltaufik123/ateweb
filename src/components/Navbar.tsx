@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Menu, X } from 'lucide-react';
 
 const NAV_LINKS = [
+  { label: 'SMM Panel', href: 'https://www.akmaltaufikenterprise.my/booster' },
   { label: 'Services', href: '#services' },
   { label: 'AI API', href: '#ai-api' },
   { label: 'ATEGateway', href: '#ategateway' },
@@ -73,7 +74,11 @@ export default function Navbar() {
                 <li key={link.label}>
                   <a
                     href={link.href}
-                    className="block whitespace-nowrap rounded-[7px] px-2 py-2 text-[15px] font-normal leading-[22px] text-white transition-colors hover:bg-white/10 xl:px-4"
+                    className={`block whitespace-nowrap rounded-[7px] px-2 py-2 text-[15px] font-normal leading-[22px] transition-colors hover:bg-white/10 xl:px-4 ${
+                      link.label === 'SMM Panel'
+                        ? 'border border-red-500/30 bg-red-500/[0.06] text-white hover:border-red-500/50 hover:bg-red-500/[0.1]'
+                        : 'text-white'
+                    }`}
                   >
                     {link.label}
                   </a>
@@ -165,7 +170,11 @@ export default function Navbar() {
                     href={link.href}
                     tabIndex={open ? 0 : -1}
                     onClick={() => setOpen(false)}
-                    className="block rounded-[8px] px-4 py-3.5 text-[15px] font-normal text-white/85 transition-colors hover:bg-white/10 hover:text-white"
+                    className={`block rounded-[8px] px-4 py-3.5 text-[15px] font-normal transition-colors hover:text-white ${
+                      link.label === 'SMM Panel'
+                        ? 'border border-red-500/30 bg-red-500/[0.06] text-white hover:border-red-500/50 hover:bg-red-500/[0.1]'
+                        : 'text-white/85 hover:bg-white/10'
+                    }`}
                   >
                     {link.label}
                   </a>

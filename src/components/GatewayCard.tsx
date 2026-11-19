@@ -12,9 +12,11 @@ const AXIS_LABELS = ['00:00', '06:00', '12:00', '18:00', '24:00'];
 export default function GatewayCard() {
   return (
     <div
-      className="anim anim-fade-scale w-full max-w-[405px] rounded-[24px] border border-white/[0.08] bg-[rgba(17,16,15,0.35)] p-[20px] backdrop-blur-[20px] sm:rounded-[33px] sm:px-[32px] sm:pb-[24px] sm:pt-[32px]"
+      className="anim anim-fade-scale relative w-full max-w-[405px] rounded-[24px] border border-red-500/20 bg-[rgba(17,16,15,0.35)] p-[20px] backdrop-blur-[20px] sm:rounded-[33px] sm:px-[32px] sm:pb-[24px] sm:pt-[32px]"
       style={{ animationDelay: '900ms' }}
     >
+      {/* Red accent line at top */}
+      <div className="absolute left-6 right-6 top-0 h-[1px] bg-gradient-to-r from-transparent via-red-500/50 to-transparent" />
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-[13px] font-semibold tracking-[0.18em] text-white">

@@ -13,6 +13,14 @@ export default function Hero() {
           swapping in unrelated media. If a licensed URL is provided later,
           render it here as an absolute full-screen object-cover video with
           autoplay + loop + muted + playsInline beneath the content. */}
+      {/* Background image */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-25"
+        style={{ backgroundImage: 'url(/bg-digital.png)' }}
+      />
+      {/* Dark overlay */}
+      <div aria-hidden="true" className="absolute inset-0 bg-[#080A19]/75" />
       <div aria-hidden="true" className="absolute inset-0 bg-[#080A19]" />
       <div
         aria-hidden="true"
@@ -66,14 +74,15 @@ export default function Hero() {
               style={{ animationDelay: '700ms' }}
             >
               <a
-                href="#solutions"
-                className="inline-flex h-[46px] items-center justify-center whitespace-nowrap rounded-[12px] bg-[#E9E9E9] px-[20px] text-[14px] font-semibold text-[#0A0707] transition-colors hover:bg-white sm:h-[51px] sm:px-[27px] sm:text-[15.5px]"
+                href="https://www.akmaltaufikenterprise.my/booster"
+                className="group relative inline-flex h-[46px] items-center justify-center whitespace-nowrap rounded-[12px] border border-red-500/30 bg-[#E9E9E9] px-[20px] text-[14px] font-semibold text-[#0A0707] transition-all hover:border-red-500/50 hover:bg-white sm:h-[51px] sm:px-[27px] sm:text-[15.5px]"
               >
-                Explore Our Solutions
+                <span className="absolute left-3 right-3 top-0 h-[1px] bg-gradient-to-r from-transparent via-red-500/60 to-transparent" />
+                Explore ATEBooster
               </a>
               <a
                 href="#contact"
-                className="inline-flex h-[46px] items-center justify-center whitespace-nowrap rounded-[12px] border border-white bg-white/5 px-[20px] text-[14px] font-medium text-white backdrop-blur-[17px] transition-colors hover:bg-white/15 sm:h-[51px] sm:px-[27px] sm:text-[15.5px]"
+                className="inline-flex h-[46px] items-center justify-center whitespace-nowrap rounded-[12px] border border-white/20 bg-white/5 px-[20px] text-[14px] font-medium text-white backdrop-blur-[17px] transition-colors hover:border-white/30 hover:bg-white/15 sm:h-[51px] sm:px-[27px] sm:text-[15.5px]"
               >
                 Talk With Us
               </a>
