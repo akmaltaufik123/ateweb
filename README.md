@@ -1,6 +1,6 @@
 # Akmal Taufik Enterprise — Website V2
 
-Experimental redevelopment of the official Akmal Taufik Enterprise website.
+Akmal Taufik Enterprise frontend and ATE Booster manual-payment service.
 
 > This is the experimental V2 frontend prototype for Akmal Taufik Enterprise
 > (Infotech Solution). It is a visual prototype only — not the production
@@ -8,9 +8,10 @@ Experimental redevelopment of the official Akmal Taufik Enterprise website.
 
 ## Technology stack
 
-- Vite 5
+- Node 24.18+ (24.x), Express 5, transactional SQLite
+- Vite 7
 - React 18.3
-- TypeScript 5.5
+- TypeScript 5.9
 - Tailwind CSS 3.4
 - PostCSS + Autoprefixer
 - lucide-react (icons)
@@ -21,7 +22,10 @@ Path alias: `@/*` maps to `src/*`.
 ## Local development
 
 ```bash
-npm install
+npm ci
+# Configure private .env using .env.example
+npm run server
+# In a second terminal, with matching public origin:
 npm run dev
 ```
 
@@ -47,7 +51,7 @@ Output goes to `dist/`. The build is type-checked separately via
 
 Repository: `akmaltaufik123/ateweb`
 
-Vite is configured with `base: '/ateweb/'` so assets resolve correctly under
+The Pages workflow sets `GITHUB_PAGES=true`, configuring Vite with `base: '/ateweb/'` so assets resolve correctly under
 `https://akmaltaufik123.github.io/ateweb/` instead of assuming domain root.
 
 Deployment is automated via `.github/workflows/deploy-pages.yml`:
@@ -70,3 +74,9 @@ dependency was introduced. If a licensed atmospheric video is approved later,
 it should be mounted as an absolute full-screen `object-cover` video with
 `autoplay`, `loop`, `muted`, and `playsInline`, layered beneath the content
 without a heavy opaque overlay.
+
+## Booster backend and QA
+
+`npm test` runs isolated mocked-provider integration and migration/backup tests. `npm start` serves a prebuilt artifact. The admin dashboard is `/admin/booster`. Default and Custom Comments services are supported; payment confirmation and provider authorization are separate actions. See the deployment guide before using real credentials or customer data.
+
+For optional browser QA, start `node server/tests/preview.js` (mock provider, memory database, loopback only) and run `node server/tests/browser-smoke.js` in another terminal. Install the Playwright Chromium browser with `npx playwright install chromium` on Linux; on Windows the runner uses installed Microsoft Edge. Screenshots go to ignored `artifacts/qa/`.
