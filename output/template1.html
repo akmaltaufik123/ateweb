@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Template 1 - Akmal Taufik Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com/">
+  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --red: #dc2626;
+      --red-dark: #b91c1c;
+      --bg: #ffffff;
+      --text: #1a1a1a;
+      --text-muted: #666666;
+      --text-light: #999999;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Navigation */
+    .nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto; padding: 0 40px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 72px;
+    }
+    .brand {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 1.25rem; font-weight: 700; color: var(--text);
+      text-decoration: none;
+    }
+    .brand-icon {
+      width: 32px; height: 32px;
+      background: var(--red);
+      transform: rotate(45deg);
+      border-radius: 4px;
+    }
+    .nav-links {
+      display: flex; align-items: center; gap: 32px;
+    }
+    .nav-links a {
+      font-size: 0.875rem; font-weight: 500; color: var(--text-light);
+      text-decoration: none; transition: color 0.2s ease;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    /* Hero */
+    .hero {
+      position: relative; min-height: 85vh;
+      display: flex; align-items: center;
+      padding: 80px 40px;
+      overflow: hidden;
+    }
+    .hero-content {
+      max-width: 600px; position: relative; z-index: 2;
+    }
+    .hero h1 {
+      font-size: clamp(2.5rem, 5vw, 3.5rem); font-weight: 800;
+      line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 24px;
+    }
+    .hero p {
+      font-size: 1.125rem; color: var(--text-muted);
+      line-height: 1.7; margin-bottom: 40px;
+    }
+    .btn {
+      display: inline-block; padding: 14px 32px;
+      background: var(--text); color: #fff;
+      font-size: 0.875rem; font-weight: 600;
+      text-decoration: none; border-radius: 8px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+
+    /* 3D Cubes Background */
+    .cubes-bg {
+      position: absolute; top: 0; right: 0; bottom: 0;
+      width: 60%; z-index: 1;
+      pointer-events: none;
+    }
+    .cube {
+      position: absolute;
+      border: 1px solid rgba(220, 38, 38, 0.2);
+      background: rgba(220, 38, 38, 0.03);
+      transform-style: preserve-3d;
+      animation: float 8s ease-in-out infinite;
+    }
+    .cube-1 { width: 120px; height: 120px; top: 20%; right: 15%; animation-delay: 0s; }
+    .cube-2 { width: 80px; height: 80px; top: 40%; right: 35%; animation-delay: 1s; }
+    .cube-3 { width: 100px; height: 100px; top: 60%; right: 20%; animation-delay: 2s; }
+    .cube-4 { width: 60px; height: 60px; top: 30%; right: 50%; animation-delay: 3s; }
+    .cube-5 { width: 90px; height: 90px; top: 70%; right: 40%; animation-delay: 4s; }
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotateX(0) rotateY(0); }
+      50% { transform: translateY(-20px) rotateX(10deg) rotateY(10deg); }
+    }
+
+    /* Sections */
+    .section {
+      padding: 100px 40px;
+      max-width: 1200px; margin: 0 auto;
+    }
+    .section-header {
+      margin-bottom: 64px;
+    }
+    .section-title {
+      font-size: clamp(2rem, 4vw, 2.5rem); font-weight: 800;
+      letter-spacing: -0.02em; margin-bottom: 16px;
+    }
+    .section-subtitle {
+      font-size: 1rem; color: var(--text-muted);
+    }
+
+    /* Cards Grid */
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+    .card {
+      padding: 32px;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: 12px;
+      transition: all 0.3s ease;
+    }
+    .card:hover {
+      border-color: var(--red);
+      box-shadow: 0 8px 30px rgba(220, 38, 38, 0.1);
+      transform: translateY(-4px);
+    }
+    .card-icon {
+      width: 48px; height: 48px; margin-bottom: 20px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(220, 38, 38, 0.1);
+      border-radius: 10px; font-size: 1.5rem;
+    }
+    .card h3 {
+      font-size: 1.125rem; font-weight: 700; margin-bottom: 12px;
+    }
+    .card p {
+      font-size: 0.9375rem; color: var(--text-muted); line-height: 1.7;
+    }
+    .card ul { list-style: none; }
+    .card ul li {
+      font-size: 0.9375rem; color: var(--text-muted);
+      padding: 6px 0; padding-left: 20px; position: relative;
+    }
+    .card ul li::before {
+      content: '→'; position: absolute; left: 0; color: var(--red);
+    }
+
+    /* Coverage */
+    .state-name {
+      font-size: 2rem; font-weight: 800; color: var(--red);
+      text-align: center;
+    }
+
+    /* Steps */
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+    .step { text-align: center; }
+    .step-num {
+      font-size: 3rem; font-weight: 800; color: var(--red);
+      line-height: 1; margin-bottom: 16px;
+    }
+    .step h3 {
+      font-size: 1.125rem; font-weight: 700; margin-bottom: 12px;
+    }
+    .step p {
+      font-size: 0.9375rem; color: var(--text-muted); line-height: 1.7;
+    }
+
+    /* Contact */
+    .card-contact { text-align: center; }
+    .card-contact .btn {
+      margin-top: 16px; margin-right: 8px;
+      padding: 10px 20px; font-size: 0.875rem;
+      background: transparent; color: var(--text);
+      border: 1px solid var(--text);
+    }
+    .card-contact .btn:hover {
+      background: var(--text); color: #fff;
+    }
+
+    /* Footer */
+    .footer {
+      padding: 48px 40px; text-align: center;
+      border-top: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    .footer p {
+      font-size: 0.875rem; color: var(--text-light); margin-bottom: 8px;
+    }
+    .slogan-mini {
+      color: var(--red) !important; font-weight: 600;
+      letter-spacing: 0.1em; font-size: 0.75rem !important;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .grid, .steps { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+      .hero { padding: 60px 24px; }
+      .cubes-bg { width: 100%; opacity: 0.3; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <header class="nav">
+    <div class="nav-inner">
+      <a href="#" class="brand">
+        <div class="brand-icon"></div>
+        <span>akmal aufik enterprise</span>
+      </a>
+      <nav class="nav-links">
+        <a href="#services">Perkhidmatan</a>
+        <a href="#coverage">Kawasan Liputan</a>
+        <a href="#why">Kenapa Kami</a>
+        <a href="#contact">Hubungi</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Perkhidmatan IT Profesional di Pulau Pinang</h1>
+      <p>Dari pemasangan server dan CCTV hingga kelas komputer dan AI. Penyelesaian IT berkualiti untuk rumah dan pejabat dengan tindak balas pantas dan harga telus.</p>
+      <a href="#contact" class="btn">Hubungi Sekarang</a>
+    </div>
+    <div class="cubes-bg">
+      <div class="cube cube-1"></div>
+      <div class="cube cube-2"></div>
+      <div class="cube cube-3"></div>
+      <div class="cube cube-4"></div>
+      <div class="cube cube-5"></div>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section id="services" class="section">
+    <div class="section-header">
+      <h2 class="section-title">Perkhidmatan Kami</h2>
+      <p class="section-subtitle">Penyelesaian IT lengkap untuk keperluan anda</p>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <div class="card-icon">⚙️</div>
+        <h3>Pemasangan Server, Rack Server, WiFi & CCTV</h3>
+        <p>Pemasangan dan konfigurasi server, rack server, sistem CCTV, dan liputan WiFi untuk rumah dan pejabat.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔌</div>
+        <h3>Pemasangan Kabel Rangkaian</h3>
+        <p>Pemasangan kabel rangkaian di rumah dan pejabat dengan kemasan yang kemas dan sambungan yang stabil.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">💻</div>
+        <h3>Pemasangan Komputer & Laptop</h3>
+        <p>Pemasangan dan penyediaan komputer dan laptop di rumah dan pejabat, termasuk pemasangan perisian dan persediaan awal.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🤖</div>
+        <h3>Kelas Asas Kecerdasan Buatan (AI)</h3>
+        <p>Kelas asasi AI secara online atau bersemuka — belajar cara menggunakan alatan AI secara praktikal dan mudah.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🎓</div>
+        <h3>Kelas Asas Komputer</h3>
+        <p>Kelas online atau bersemuka untuk asas komputer, daripada tahap permulaan hingga kemahiran harian.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">✨</div>
+        <h3>Dan Banyak Lagi Perkhidmatan</h3>
+        <p>Perkhidmatan lain tersedia mengikut permintaan. Hubungi kami untuk maklumat lanjut.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Coverage Section -->
+  <section id="coverage" class="section">
+    <div class="section-header">
+      <h2 class="section-title">Kawasan Liputan</h2>
+      <p class="section-subtitle">Perkhidmatan on-site di Pulau Pinang</p>
+    </div>
+    <div class="grid">
+      <div class="card" style="text-align:center;">
+        <h3>Negeri Tersedia</h3>
+        <p class="state-name">Pulau Pinang</p>
+      </div>
+      <div class="card">
+        <h3>Kawasan Tersedia (Dalam Pulau)</h3>
+        <ul>
+          <li>Gelugor</li>
+          <li>Batu Uban</li>
+          <li>Sungai Dua</li>
+          <li>Sungai Nibong</li>
+          <li>Sungai Ara</li>
+          <li>Bayan Lepas</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Kawasan Tersedia (Seberang Pulau)</h3>
+        <ul>
+          <li>Bagan Dalam</li>
+          <li>Bagan Luar</li>
+          <li>Bandar Perda</li>
+          <li>Jalan Baru</li>
+          <li>Permatang Pauh</li>
+          <li>Seberang Jaya</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Section -->
+  <section id="why" class="section">
+    <div class="section-header">
+      <h2 class="section-title">Kenapa Pilih Kami</h2>
+      <p class="section-subtitle">Kelebihan yang membezakan kami</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3>Tindak Balas Pantas</h3>
+        <p>Kami bertindak balas dengan cepat supaya peranti, rangkaian dan sistem anda kembali berfungsi tanpa masa menunggu yang lama.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3>Harga Telus & Berpatutan</h3>
+        <p>Tiada caj tersembunyi. Anda mengetahui kos sebelum sebarang kerja dimulakan.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3>Remote & On-Site</h3>
+        <p>Daripada pembaikan jauh yang pantas kepada pemasangan bersemuka penuh, kami mengikut jadual anda.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="section">
+    <div class="section-header">
+      <h2 class="section-title">Hubungi Kami</h2>
+      <p class="section-subtitle">Kami sedia membantu anda</p>
+    </div>
+    <div class="grid">
+      <div class="card card-contact">
+        <div class="card-icon">📞</div>
+        <h3>Hubungi / WhatsApp</h3>
+        <p>+60 18-945 1570</p>
+        <a href="tel:+60189451570" class="btn">Hubungi</a>
+        <a href="https://wa.me/60189451570" class="btn" target="_blank">WhatsApp</a>
+      </div>
+      <div class="card card-contact">
+        <div class="card-icon">✉️</div>
+        <h3>E-mel</h3>
+        <p>akmaltaufik.business@gmail.com</p>
+        <a href="mailto:akmaltaufik.business@gmail.com" class="btn">Hantar E-mel</a>
+      </div>
+      <div class="card card-contact">
+        <div class="card-icon">💼</div>
+        <h3>LinkedIn</h3>
+        <p>Berhubung dengan kami di LinkedIn.</p>
+        <a href="https://www.linkedin.com/in/akmaltaufik" class="btn" target="_blank">Lihat Profil</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>Server & rack server | WiFi & CCTV | Kabel rangkaian | Komputer & laptop | Kelas komputer & AI</p>
+      <p class="slogan-mini">PANTAS - PROFESSIONAL - DIPERCAYAI</p>
+      <p style="margin-top:16px;">© 2026 Hak cipta terpelihara.</p>
+    </div>
+  </footer>
+</body>
+</html>

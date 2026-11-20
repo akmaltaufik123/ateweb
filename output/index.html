@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perkhidmatan IT Pulau Pinang — Server, CCTV, Kelas Komputer & AI</title>
+  <meta name="description" content="Perkhidmatan IT di Pulau Pinang — pemasangan server, rack server, WiFi, CCTV, kabel rangkaian, komputer dan laptop, serta kelas komputer dan AI.">
+  <link rel="preconnect" href="https://fonts.googleapis.com/">
+  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --red: #dc2626;
+      --red-bright: #ef4444;
+      --red-dark: #991b1b;
+      --red-glow: rgba(220, 38, 38, 0.6);
+      --bg: #0a0a0a;
+      --text: #ffffff;
+      --text-muted: #cccccc;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Glowing Pillars Background */
+    .pillars-bg {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: 0;
+      overflow: hidden;
+      background: linear-gradient(180deg, #0a0a0a 0%, #1a0505 100%);
+    }
+    .pillar {
+      position: absolute;
+      bottom: 0;
+      border-radius: 50% 50% 0 0;
+      filter: blur(40px);
+      opacity: 0.7;
+      animation: pillarGlow 4s ease-in-out infinite;
+    }
+    .pillar-1 {
+      left: 10%;
+      width: 120px;
+      height: 500px;
+      background: linear-gradient(180deg, 
+        rgba(220, 38, 38, 0.8) 0%, 
+        rgba(185, 28, 28, 0.6) 50%, 
+        rgba(153, 27, 27, 0.3) 100%);
+      animation-delay: 0s;
+    }
+    .pillar-2 {
+      left: 25%;
+      width: 100px;
+      height: 450px;
+      background: linear-gradient(180deg, 
+        rgba(239, 68, 68, 0.9) 0%, 
+        rgba(220, 38, 38, 0.7) 50%, 
+        rgba(185, 28, 28, 0.4) 100%);
+      animation-delay: 0.5s;
+    }
+    .pillar-3 {
+      left: 45%;
+      width: 140px;
+      height: 550px;
+      background: linear-gradient(180deg, 
+        rgba(248, 113, 113, 0.85) 0%, 
+        rgba(239, 68, 68, 0.65) 50%, 
+        rgba(220, 38, 38, 0.35) 100%);
+      animation-delay: 1s;
+    }
+    .pillar-4 {
+      right: 25%;
+      width: 110px;
+      height: 480px;
+      background: linear-gradient(180deg, 
+        rgba(239, 68, 68, 0.8) 0%, 
+        rgba(220, 38, 38, 0.6) 50%, 
+        rgba(185, 28, 28, 0.3) 100%);
+      animation-delay: 1.5s;
+    }
+    .pillar-5 {
+      right: 10%;
+      width: 130px;
+      height: 520px;
+      background: linear-gradient(180deg, 
+        rgba(220, 38, 38, 0.75) 0%, 
+        rgba(185, 28, 28, 0.55) 50%, 
+        rgba(153, 27, 27, 0.25) 100%);
+      animation-delay: 2s;
+    }
+    @keyframes pillarGlow {
+      0%, 100% { opacity: 0.7; filter: blur(40px); }
+      50% { opacity: 0.9; filter: blur(50px); }
+    }
+
+    /* Diagonal Lines Texture */
+    .texture-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: 1;
+      background-image: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 2px,
+        rgba(255, 255, 255, 0.02) 2px,
+        rgba(255, 255, 255, 0.02) 4px
+      );
+      pointer-events: none;
+    }
+
+    /* Navigation */
+    .nav {
+      position: relative;
+      z-index: 100;
+      padding: 32px 40px;
+      text-align: center;
+    }
+    .nav-links {
+      display: inline-flex;
+      gap: 40px;
+    }
+    .nav-links a {
+      font-size: 0.875rem;
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      text-transform: lowercase;
+      transition: color 0.3s ease;
+    }
+    .nav-links a:hover {
+      color: #fff;
+    }
+
+    /* Hero Section */
+    .hero {
+      position: relative;
+      z-index: 2;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 80px 40px;
+    }
+    .hero-content {
+      max-width: 900px;
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 8vw, 6rem);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 24px;
+      text-shadow: 0 0 40px rgba(220, 38, 38, 0.3);
+    }
+    .hero p {
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto 48px;
+      line-height: 1.7;
+      font-weight: 300;
+    }
+    .btn {
+      display: inline-block;
+      padding: 16px 40px;
+      background: linear-gradient(135deg, rgba(220, 38, 38, 0.3), rgba(185, 28, 28, 0.2));
+      color: #fff;
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-decoration: none;
+      border-radius: 100px;
+      border: 1px solid rgba(220, 38, 38, 0.5);
+      text-transform: lowercase;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+    .btn:hover {
+      background: linear-gradient(135deg, rgba(220, 38, 38, 0.5), rgba(185, 28, 28, 0.4));
+      border-color: rgba(220, 38, 38, 0.8);
+      box-shadow: 0 0 30px rgba(220, 38, 38, 0.4);
+      transform: translateY(-2px);
+    }
+
+    /* Sections */
+    .section {
+      position: relative;
+      z-index: 2;
+      padding: 120px 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .section-header {
+      text-align: center;
+      margin-bottom: 80px;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.5rem, 5vw, 3.5rem);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+      text-shadow: 0 0 30px rgba(220, 38, 38, 0.2);
+    }
+    .section-subtitle {
+      font-size: 1.125rem;
+      color: var(--text-muted);
+      font-weight: 300;
+    }
+
+    /* Cards Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+    .card {
+      padding: 40px;
+      background: rgba(20, 20, 20, 0.6);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(220, 38, 38, 0.2);
+      border-radius: 16px;
+      transition: all 0.4s ease;
+    }
+    .card:hover {
+      border-color: rgba(220, 38, 38, 0.6);
+      background: rgba(30, 10, 10, 0.8);
+      transform: translateY(-6px);
+      box-shadow: 0 12px 40px rgba(220, 38, 38, 0.2);
+    }
+    .card-icon {
+      width: 56px;
+      height: 56px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(220, 38, 38, 0.15);
+      border: 1px solid rgba(220, 38, 38, 0.3);
+      border-radius: 12px;
+      font-size: 1.75rem;
+    }
+    .card h3 {
+      font-family: 'Inter', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: #fff;
+    }
+    .card p {
+      font-size: 1rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+      font-weight: 300;
+    }
+    .card ul {
+      list-style: none;
+    }
+    .card ul li {
+      font-size: 1rem;
+      color: var(--text-muted);
+      padding: 8px 0;
+      padding-left: 24px;
+      position: relative;
+      font-weight: 300;
+    }
+    .card ul li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--red);
+      font-weight: 600;
+    }
+
+    /* Coverage */
+    .state-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--red);
+      text-align: center;
+      text-shadow: 0 0 20px rgba(220, 38, 38, 0.4);
+    }
+
+    /* Steps */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 48px;
+    }
+    .step {
+      text-align: center;
+      padding: 40px;
+      background: rgba(20, 20, 20, 0.6);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(220, 38, 38, 0.2);
+      border-radius: 16px;
+      transition: all 0.4s ease;
+    }
+    .step:hover {
+      border-color: rgba(220, 38, 38, 0.6);
+      transform: translateY(-6px);
+      box-shadow: 0 12px 40px rgba(220, 38, 38, 0.2);
+    }
+    .step-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 4rem;
+      font-weight: 900;
+      color: var(--red);
+      line-height: 1;
+      margin-bottom: 20px;
+      text-shadow: 0 0 30px rgba(220, 38, 38, 0.5);
+    }
+    .step h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+    .step p {
+      font-size: 1rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    /* Contact */
+    .card-contact {
+      text-align: center;
+    }
+    .card-contact .btn {
+      margin-top: 20px;
+      margin-right: 8px;
+      padding: 12px 28px;
+      font-size: 0.875rem;
+    }
+
+    /* Footer */
+    .footer {
+      position: relative;
+      z-index: 2;
+      padding: 60px 40px;
+      text-align: center;
+      border-top: 1px solid rgba(220, 38, 38, 0.2);
+    }
+    .footer p {
+      font-size: 0.875rem;
+      color: rgba(255, 255, 255, 0.5);
+      margin-bottom: 12px;
+      font-weight: 300;
+    }
+    .slogan-mini {
+      color: var(--red) !important;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      font-size: 0.8rem !important;
+      text-transform: uppercase;
+      text-shadow: 0 0 10px rgba(220, 38, 38, 0.3);
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .grid, .steps {
+        grid-template-columns: 1fr;
+      }
+      .nav-links {
+        gap: 20px;
+      }
+      .hero {
+        padding: 60px 24px;
+      }
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+      .pillar {
+        opacity: 0.4;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Background Effects -->
+  <div class="pillars-bg">
+    <div class="pillar pillar-1"></div>
+    <div class="pillar pillar-2"></div>
+    <div class="pillar pillar-3"></div>
+    <div class="pillar pillar-4"></div>
+    <div class="pillar pillar-5"></div>
+  </div>
+  <div class="texture-overlay"></div>
+
+  <!-- Navigation -->
+  <header class="nav">
+    <nav class="nav-links">
+      <a href="#services">perkhidmatan</a>
+      <a href="#coverage">kawasan liputan</a>
+      <a href="#why">kenapa kami</a>
+      <a href="#contact">hubungi</a>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Perkhidmatan IT Profesional di Pulau Pinang</h1>
+      <p>Dari pemasangan server dan CCTV hingga kelas komputer dan AI. Penyelesaian IT berkualiti untuk rumah dan pejabat dengan tindak balas pantas dan harga telus.</p>
+      <a href="#contact" class="btn">hubungi sekarang</a>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section id="services" class="section">
+    <div class="section-header">
+      <h2 class="section-title">Perkhidmatan Kami</h2>
+      <p class="section-subtitle">Penyelesaian IT lengkap untuk keperluan anda</p>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <div class="card-icon">⚙️</div>
+        <h3>Pemasangan Server, Rack Server, WiFi & CCTV</h3>
+        <p>Pemasangan dan konfigurasi server, rack server, sistem CCTV, dan liputan WiFi untuk rumah dan pejabat.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔌</div>
+        <h3>Pemasangan Kabel Rangkaian</h3>
+        <p>Pemasangan kabel rangkaian di rumah dan pejabat dengan kemasan yang kemas dan sambungan yang stabil.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">💻</div>
+        <h3>Pemasangan Komputer & Laptop</h3>
+        <p>Pemasangan dan penyediaan komputer dan laptop di rumah dan pejabat, termasuk pemasangan perisian dan persediaan awal.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🤖</div>
+        <h3>Kelas Asas Kecerdasan Buatan (AI)</h3>
+        <p>Kelas asasi AI secara online atau bersemuka — belajar cara menggunakan alatan AI secara praktikal dan mudah.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🎓</div>
+        <h3>Kelas Asas Komputer</h3>
+        <p>Kelas online atau bersemuka untuk asas komputer, daripada tahap permulaan hingga kemahiran harian.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">✨</div>
+        <h3>Dan Banyak Lagi Perkhidmatan</h3>
+        <p>Perkhidmatan lain tersedia mengikut permintaan. Hubungi kami untuk maklumat lanjut.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Coverage Section -->
+  <section id="coverage" class="section">
+    <div class="section-header">
+      <h2 class="section-title">Kawasan Liputan</h2>
+      <p class="section-subtitle">Perkhidmatan on-site di Pulau Pinang</p>
+    </div>
+    <div class="grid">
+      <div class="card" style="text-align:center;">
+        <h3>Negeri Tersedia</h3>
+        <p class="state-name">Pulau Pinang</p>
+      </div>
+      <div class="card">
+        <h3>Kawasan Tersedia (Dalam Pulau)</h3>
+        <ul>
+          <li>Gelugor</li>
+          <li>Batu Uban</li>
+          <li>Sungai Dua</li>
+          <li>Sungai Nibong</li>
+          <li>Sungai Ara</li>
+          <li>Bayan Lepas</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Kawasan Tersedia (Seberang Pulau)</h3>
+        <ul>
+          <li>Bagan Dalam</li>
+          <li>Bagan Luar</li>
+          <li>Bandar Perda</li>
+          <li>Jalan Baru</li>
+          <li>Permatang Pauh</li>
+          <li>Seberang Jaya</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Section -->
+  <section id="why" class="section">
+    <div class="section-header">
+      <h2 class="section-title">Kenapa Pilih Kami</h2>
+      <p class="section-subtitle">Kelebihan yang membezakan kami</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3>Tindak Balas Pantas</h3>
+        <p>Kami bertindak balas dengan cepat supaya peranti, rangkaian dan sistem anda kembali berfungsi tanpa masa menunggu yang lama.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3>Harga Telus & Berpatutan</h3>
+        <p>Tiada caj tersembunyi. Anda mengetahui kos sebelum sebarang kerja dimulakan.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3>Remote & On-Site</h3>
+        <p>Daripada pembaikan jauh yang pantas kepada pemasangan bersemuka penuh, kami mengikut jadual anda.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="section">
+    <div class="section-header">
+      <h2 class="section-title">Hubungi Kami</h2>
+      <p class="section-subtitle">Kami sedia membantu anda</p>
+    </div>
+    <div class="grid">
+      <div class="card card-contact">
+        <div class="card-icon">📞</div>
+        <h3>Hubungi / WhatsApp</h3>
+        <p>+60 18-945 1570</p>
+        <a href="tel:+60189451570" class="btn">hubungi</a>
+        <a href="https://wa.me/60189451570" class="btn" target="_blank">whatsapp</a>
+      </div>
+      <div class="card card-contact">
+        <div class="card-icon">✉️</div>
+        <h3>E-mel</h3>
+        <p>akmaltaufik.business@gmail.com</p>
+        <a href="mailto:akmaltaufik.business@gmail.com" class="btn">hantar e-mel</a>
+      </div>
+      <div class="card card-contact">
+        <div class="card-icon">💼</div>
+        <h3>LinkedIn</h3>
+        <p>Berhubung dengan kami di LinkedIn.</p>
+        <a href="https://www.linkedin.com/in/akmaltaufik" class="btn" target="_blank">lihat profil</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>Server & rack server | WiFi & CCTV | Kabel rangkaian | Komputer & laptop | Kelas komputer & AI</p>
+      <p class="slogan-mini">PANTAS - PROFESSIONAL - DIPERCAYAI</p>
+      <p style="margin-top:20px;">© 2026 Hak cipta terpelihara.</p>
+    </div>
+  </footer>
+</body>
+</html>
