@@ -30,6 +30,22 @@ async function proxyToApi(params) {
   return res.json();
 }
 
+// Manual WhatsApp checkout: never submit paid upstream orders from public endpoints.
+// These operations require a separate authenticated admin workflow.
+const adminGuard = (req, res, next) => {
+  const configured = process.env.BOOSTER_ADMIN_TOKEN;
+  const provided = req.get('x-admin-token');
+  if (!configured || !provided || provided.length !== configured.length) {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
+  if (!timingSafeEqual(Buffer.from(provided), Buffer.from(configured))) {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
+  next();
+};
+const { timingSafeEqual } = await import('node:crypto');
+app.use(['/api/order', '/api/balance', '/api/refill', '/api/cancel'], adminGuard);
+
 // GET /api/services — fetch all services
 app.get('/api/services', async (_req, res) => {
   try {
