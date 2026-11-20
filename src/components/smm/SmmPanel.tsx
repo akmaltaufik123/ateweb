@@ -14,14 +14,12 @@ import {
   Search,
   ShoppingCart,
   AlertCircle,
-  Package,
 } from 'lucide-react';
 import type { SmmService } from '@/types/smm';
 import { fetchServices } from '@/api/smm';
 import { PLATFORMS, groupByPlatform } from '@/utils/platforms';
 import { formatPrice } from '@/utils/currency';
 import OrderModal from '@/components/smm/OrderModal';
-import OrderTracker from '@/components/smm/OrderTracker';
 
 const PLATFORM_ICONS: Record<string, React.ReactNode> = {
   instagram: <Instagram size={16} />,
@@ -43,7 +41,6 @@ export default function SmmPanel() {
   const [activePlatform, setActivePlatform] = useState<string>('instagram');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedService, setSelectedService] = useState<SmmService | null>(null);
-  const [showTracker, setShowTracker] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -190,13 +187,7 @@ export default function SmmPanel() {
               className="w-full rounded-[10px] border border-white/[0.08] bg-[rgba(10,7,7,0.35)] py-2.5 pl-10 pr-4 text-[13px] text-white placeholder:text-white/25 outline-none backdrop-blur-[17px] transition-colors focus:border-white/[0.15]"
             />
           </div>
-          <button
-            onClick={() => setShowTracker(true)}
-            className="flex items-center justify-center gap-2 rounded-[10px] border border-white/[0.08] bg-[rgba(10,7,7,0.35)] px-4 py-2.5 text-[12px] font-medium text-white/55 backdrop-blur-[17px] transition-colors hover:bg-white/[0.06] hover:text-white/75"
-          >
-            <Package size={14} />
-            Track Order
-          </button>
+
         </div>
 
         {/* Active platform label */}
@@ -233,13 +224,6 @@ export default function SmmPanel() {
         <OrderModal
           service={selectedService}
           onClose={() => setSelectedService(null)}
-        />
-      )}
-
-      {/* Order Tracker Modal */}
-      {showTracker && (
-        <OrderTracker
-          onClose={() => setShowTracker(false)}
         />
       )}
 
