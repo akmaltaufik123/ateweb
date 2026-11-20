@@ -32,7 +32,7 @@ async function load(){
 }
 async function loadServices(){
  try{
- const [items,config]=await Promise.all([fetch('/api/services').then(r=>r.json()),api('/api/admin/pricing')]);
+ const config=await api('/api/admin/pricing');const items=config.services;
  $('services').replaceChildren();
  for(const s of items){
  const tr=$('services').insertRow();cell(tr,s.service);cell(tr,s.name);
