@@ -1,8 +1,8 @@
 # ATE Booster development results
 
-Development branch: `feat/booster-whatsapp-secure-checkout`  
-Code commit: `9e811db0d546e81efeed695e37e8a8984dbc57ca`  
-Pull request: https://github.com/akmaltaufik123/ateweb/pull/1  
+Development branch: `feat/booster-whatsapp-secure-checkout`
+Code commit: `9e811db0d546e81efeed695e37e8a8984dbc57ca`
+Pull request: https://github.com/akmaltaufik123/ateweb/pull/1
 Review date: 21 November 2026, Asia/Singapore.
 
 ## Implemented
