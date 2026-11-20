@@ -6,7 +6,6 @@ import { formatPrice } from '@/utils/currency';
 interface Props {
   service: SmmService;
   onClose: () => void;
-  onOrderPlaced: (orderId: number, serviceName: string) => void;
 }
 
 export default function OrderModal({ service, onClose }: Props) {
@@ -14,6 +13,7 @@ export default function OrderModal({ service, onClose }: Props) {
   const [quantity, setQuantity] = useState(service.min);
   const [comments, setComments] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const rate = parseFloat(service.rate);
   const totalCost = formatPrice((rate * quantity) / 1000);
@@ -37,18 +37,15 @@ export default function OrderModal({ service, onClose }: Props) {
       return;
     }
 
-    const message = [
-      'Salam, saya ingin membuat tempahan ATEBOOSTER.',
-      'Servis: ' + service.name,
-      'ID Servis: ' + service.service,
-      'Pautan: ' + link.trim(),
-      'Kuantiti: ' + quantity,
-      ...(needsComments ? ['Komen: ' + comments.trim()] : []),
-      'Anggaran harga: ' + totalCost.myr,
-      'Sila sahkan harga akhir, ketersediaan dan cara pembayaran.',
-    ].join('\\n');
-    window.open('https://wa.me/60189451570?text=' + encodeURIComponent(message), '_blank', 'noopener,noreferrer');
-    onClose();
+    setSubmitting(true);
+    try {
+      const res = await fetch('/api/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ service: service.service, link: link.trim(), quantity, comments }) });
+      if (!res.ok) throw new Error('Tempahan tidak dapat direkodkan. Cuba lagi.');
+      const data: { whatsappUrl: string } = await res.json();
+      window.location.href = data.whatsappUrl;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Ralat tempahan');
+    } finally { setSubmitting(false); }
   };
 
   return (
@@ -188,10 +185,10 @@ export default function OrderModal({ service, onClose }: Props) {
           {/* Submit — matching primary button style */}
           <button
             type="submit"
-            
+            disabled={submitting}
             className="flex w-full items-center justify-center gap-2 rounded-[10px] bg-[#E9E9E9] py-3 text-[13px] font-semibold text-[#0A0707] transition-colors hover:bg-white disabled:opacity-50"
           >
-            <><ShoppingCart size={14} /> Tempah melalui WhatsApp — {totalCost.myr}</>
+            <><ShoppingCart size={14} /> {submitting ? "Merekod tempahan..." : "Tempah melalui WhatsApp — " + totalCost.myr}</>
           </button>
         </form>
       </div>
