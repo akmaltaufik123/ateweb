@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { X, Loader2, AlertCircle, ShoppingCart } from 'lucide-react';
+import { X, AlertCircle, ShoppingCart } from 'lucide-react';
 import type { SmmService } from '@/types/smm';
-import { placeOrder } from '@/api/smm';
 import { formatPrice } from '@/utils/currency';
 
 interface Props {
@@ -10,11 +9,10 @@ interface Props {
   onOrderPlaced: (orderId: number, serviceName: string) => void;
 }
 
-export default function OrderModal({ service, onClose, onOrderPlaced }: Props) {
+export default function OrderModal({ service, onClose }: Props) {
   const [link, setLink] = useState('');
   const [quantity, setQuantity] = useState(service.min);
   const [comments, setComments] = useState('');
-  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const rate = parseFloat(service.rate);
@@ -39,24 +37,18 @@ export default function OrderModal({ service, onClose, onOrderPlaced }: Props) {
       return;
     }
 
-    setSubmitting(true);
-    try {
-      const result = await placeOrder({
-        service: service.service,
-        link: link.trim(),
-        quantity,
-        comments: needsComments ? comments : undefined,
-      });
-      if (result.error) {
-        setError(result.error);
-      } else if (result.order) {
-        onOrderPlaced(result.order, service.name);
-      }
-    } catch {
-      setError('Failed to place order. Please try again.');
-    } finally {
-      setSubmitting(false);
-    }
+    const message = [
+      'Salam, saya ingin membuat tempahan ATEBOOSTER.',
+      'Servis: ' + service.name,
+      'ID Servis: ' + service.service,
+      'Pautan: ' + link.trim(),
+      'Kuantiti: ' + quantity,
+      ...(needsComments ? ['Komen: ' + comments.trim()] : []),
+      'Anggaran harga: ' + totalCost.myr,
+      'Sila sahkan harga akhir, ketersediaan dan cara pembayaran.',
+    ].join('\\n');
+    window.open('https://wa.me/60189451570?text=' + encodeURIComponent(message), '_blank', 'noopener,noreferrer');
+    onClose();
   };
 
   return (
@@ -111,6 +103,7 @@ export default function OrderModal({ service, onClose, onOrderPlaced }: Props) {
           </div>
         </div>
 
+        <p className="mb-4 text-[12px] text-white/60">Tempahan akan dihantar ke WhatsApp Business. Harga akhir dan bayaran disahkan secara manual; tiada pesanan upstream dibuat secara automatik.</p>
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Link */}
@@ -195,20 +188,10 @@ export default function OrderModal({ service, onClose, onOrderPlaced }: Props) {
           {/* Submit — matching primary button style */}
           <button
             type="submit"
-            disabled={submitting}
+            
             className="flex w-full items-center justify-center gap-2 rounded-[10px] bg-[#E9E9E9] py-3 text-[13px] font-semibold text-[#0A0707] transition-colors hover:bg-white disabled:opacity-50"
           >
-            {submitting ? (
-              <>
-                <Loader2 size={14} className="animate-spin" />
-                Processing...
-              </>
-            ) : (
-              <>
-                <ShoppingCart size={14} />
-                Place Order — {totalCost.myr}
-              </>
-            )}
+            <><ShoppingCart size={14} /> Tempah melalui WhatsApp — {totalCost.myr}</>
           </button>
         </form>
       </div>
