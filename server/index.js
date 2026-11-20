@@ -108,6 +108,7 @@ app.post('/api/checkout', async (req, res) => {
   } catch { res.status(502).json({ error: 'Unable to create checkout' }); }
 });
 app.get('/api/admin/orders', (_req, res) => res.json(state.orders.slice().reverse()));
+app.post('/api/status', (_req, res) => res.status(403).json({ error: 'Order tracking is available through admin support' }));
 app.get('/api/admin/summary', async (_req, res) => {
   try {
     const balance = await provider({ action: 'balance' });
@@ -115,7 +116,7 @@ app.get('/api/admin/summary', async (_req, res) => {
     res.json({ orders: state.orders.length, pending: state.orders.filter(o => o.status === 'pending_payment').length, revenueMYR: paid.reduce((a, o) => a + o.saleMYR, 0), estimatedProfitMYR: paid.reduce((a, o) => a + o.saleMYR - o.costMYR, 0), balance, events: state.events.slice(0, 30) });
   } catch { res.json({ orders: state.orders.length, pending: state.orders.filter(o => o.status === 'pending_payment').length, balance: null, events: state.events.slice(0, 30) }); }
 });
-app.get('/api/admin/pricing', (_req, res) => res.json({ pricing: state.pricing, defaultMarkup, fx }));
+app.get('/api/admin/pricing', async (_req, res) => { try { res.json({ pricing: state.pricing, defaultMarkup, fx, services: await services() }); } catch { res.status(502).json({ error: 'Provider services unavailable' }); } });
 app.put('/api/admin/pricing/:service', async (req, res) => {
   const id = Number(req.params.service), { markup, enabled } = req.body;
   if (!Number.isSafeInteger(id) || id < 1 || !validNumber(markup, 0, 10000) || typeof enabled !== 'boolean') return res.status(400).json({ error: 'Invalid pricing' });
