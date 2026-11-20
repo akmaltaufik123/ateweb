@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Instagram,
   Music2,
@@ -13,14 +13,11 @@ import {
   Loader2,
   Search,
   ShoppingCart,
-  CheckCircle2,
   AlertCircle,
-  X,
   Package,
-  RefreshCw,
 } from 'lucide-react';
 import type { SmmService } from '@/types/smm';
-import { fetchServices, placeOrder } from '@/api/smm';
+import { fetchServices } from '@/api/smm';
 import { PLATFORMS, groupByPlatform } from '@/utils/platforms';
 import { formatPrice } from '@/utils/currency';
 import OrderModal from '@/components/smm/OrderModal';
@@ -47,7 +44,6 @@ export default function SmmPanel() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedService, setSelectedService] = useState<SmmService | null>(null);
   const [showTracker, setShowTracker] = useState(false);
-  const [orderResult, setOrderResult] = useState<{ orderId: number; serviceName: string } | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -85,10 +81,6 @@ export default function SmmPanel() {
     return list.filter((s) => s.name.toLowerCase().includes(q));
   }, [grouped, activePlatform, searchQuery]);
 
-  const handleOrderPlaced = useCallback(async (orderId: number, serviceName: string) => {
-    setOrderResult({ orderId, serviceName });
-    setSelectedService(null);
-  }, []);
 
   if (loading) {
     return (
@@ -241,43 +233,17 @@ export default function SmmPanel() {
         <OrderModal
           service={selectedService}
           onClose={() => setSelectedService(null)}
-          onOrderPlaced={handleOrderPlaced}
         />
       )}
 
       {/* Order Tracker Modal */}
       {showTracker && (
         <OrderTracker
-          onClose={() => { setShowTracker(false); setOrderResult(null); }}
-          initialOrderId={orderResult?.orderId}
+          onClose={() => setShowTracker(false)}
         />
       )}
 
-      {/* Success toast */}
-      {orderResult && !showTracker && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-[12px] border border-white/[0.08] bg-[rgba(17,16,15,0.85)] px-5 py-3.5 backdrop-blur-[20px]">
-          <CheckCircle2 className="h-5 w-5 text-green-400/80" />
-          <div>
-            <p className="text-[13px] font-medium text-white/90">Order Placed</p>
-            <p className="text-[11px] text-white/40">
-              #{orderResult.orderId}
-            </p>
-          </div>
-          <button
-            onClick={() => setOrderResult(null)}
-            className="ml-2 text-white/30 hover:text-white/60"
-          >
-            <X size={14} />
-          </button>
-          <button
-            onClick={() => { setShowTracker(true); setOrderResult(null); }}
-            className="ml-1 flex items-center gap-1.5 rounded-[7px] border border-white/[0.08] bg-white/[0.06] px-2.5 py-1.5 text-[11px] font-medium text-white/60 hover:bg-white/[0.1]"
-          >
-            <RefreshCw size={10} />
-            Track
-          </button>
-        </div>
-      )}
+
     </section>
   );
 }
