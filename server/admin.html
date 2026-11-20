@@ -1,0 +1,45 @@
+<!doctype html><html lang="ms"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ATE Booster — Admin</title><style>
+:root{font-family:Arial,sans-serif;color-scheme:dark}body{margin:0;background:#0b0d15;color:#e8e9f0}main{max-width:1200px;margin:auto;padding:24px}h1{font-size:26px}h2{font-size:18px;margin-top:30px}.panel{background:#151824;border:1px solid #303441;border-radius:14px;padding:18px;margin:16px 0}.stats{display:flex;gap:12px;flex-wrap:wrap}.stats>div{flex:1;min-width:150px;background:#1c2130;padding:16px;border-radius:12px}input,button,select{font:inherit;border-radius:8px;padding:9px;background:#202536;color:white;border:1px solid #41495a}button{cursor:pointer}button:hover{background:#333a50}button:disabled{opacity:.4;cursor:default}input{max-width:100%}table{border-collapse:collapse;width:100%;font-size:13px}td,th{padding:10px;border-bottom:1px solid #303441;text-align:left;vertical-align:top}small{color:#a9adbc}.scroll{overflow:auto}a{color:#ff7777}.danger{color:#ff9c9c}#notice{white-space:pre-wrap}</style></head><body><main><h1>ATE Booster — Admin Dashboard</h1><p><small>Bayaran WhatsApp disahkan secara manual. Pesanan provider hanya dihantar selepas pengesahan admin.</small></p>
+<div class="panel"><label>Admin token <input id="token" type="password" autocomplete="off" placeholder="BOOSTER_ADMIN_TOKEN"></label> <button id="load">Muat data</button> <button id="clear">Kosongkan token</button><p id="notice" role="status"></p></div>
+<div class="stats"><div>Jumlah tempahan<h2 id="total">—</h2></div><div>Menunggu bayaran<h2 id="pending">—</h2></div><div>Jualan dibayar (RM)<h2 id="revenue">—</h2></div><div>Anggaran untung (RM)<h2 id="profit">—</h2></div></div>
+<section class="panel"><h2>Baki provider</h2><pre id="balance">—</pre></section>
+<section class="panel"><h2>Tempahan pelanggan</h2><div class="scroll"><table><thead><tr><th>Rujukan / Masa</th><th>Servis / Pautan</th><th>Jumlah</th><th>Harga / Kos</th><th>Status</th><th>Tindakan</th></tr></thead><tbody id="orders"></tbody></table></div></section>
+<section class="panel"><h2>Tetapan harga servis</h2><p><small>Markup dikira atas kos provider × kadar USD/MYR. Servis boleh dinyahaktifkan.</small></p><button id="servicesButton">Muat servis provider</button><div class="scroll"><table><thead><tr><th>ID</th><th>Servis</th><th>Markup (%)</th><th>Aktif</th><th>Tindakan</th></tr></thead><tbody id="services"></tbody></table></div></section>
+<section class="panel"><h2>Audit aktiviti</h2><pre id="events">—</pre></section>
+</main><script>
+const $=id=>document.getElementById(id), notify=s=>$('notice').textContent=s;
+async function api(url,method='GET',body) {
+ const r=await fetch(url,{method,headers:{'x-admin-token':$('token').value,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});
+ const data=await r.json();if(!r.ok)throw Error(data.error||'HTTP '+r.status);return data;
+}
+const cell=(row,value)=>{const c=row.insertCell();c.textContent=String(value??'—');return c};
+const btn=(parent,title,handler)=>{const b=document.createElement('button');b.textContent=title;b.onclick=async()=>{b.disabled=true;try{await handler();await load()}catch(e){notify(e.message)}finally{b.disabled=false}};parent.append(b)};
+async function load(){
+ try{
+  const [orders,summary]=await Promise.all([api('/api/admin/orders'),api('/api/admin/summary')]);
+  $('total').textContent=summary.orders;$('pending').textContent=summary.pending;$('revenue').textContent=Number(summary.revenueMYR||0).toFixed(2);$('profit').textContent=Number(summary.estimatedProfitMYR||0).toFixed(2);
+  $('balance').textContent=JSON.stringify(summary.balance,null,2);$('events').textContent=JSON.stringify(summary.events,null,2);
+  $('orders').replaceChildren();
+  for(const o of orders){
+   const tr=$('orders').insertRow();cell(tr,o.id+'\n'+o.createdAt);const svc=tr.insertCell();svc.textContent=o.serviceName+' (#'+o.service+') — '+o.quantity+' | ';const link=document.createElement('a');link.href=o.link;link.textContent='Pautan';link.target='_blank';link.rel='noopener noreferrer';svc.append(link);
+   cell(tr,o.quantity);cell(tr,'RM'+o.saleMYR+' / RM'+o.costMYR);cell(tr,o.status+(o.providerOrderId?' #'+o.providerOrderId:''));
+   const actions=tr.insertCell();
+   if(o.status==='pending_payment')btn(actions,'Sahkan bayaran',async()=>{if(confirm('Bayaran benar-benar diterima untuk '+o.id+'?'))await api('/api/admin/orders/'+o.id+'/confirm-payment','POST')});
+   if(o.status==='paid')btn(actions,'Hantar ke provider',async()=>{if(confirm('Hantar pesanan ini dan gunakan kredit provider?'))await api('/api/admin/orders/'+o.id+'/submit','POST')});
+   if(o.providerOrderId){btn(actions,'Status',async()=>notify(JSON.stringify(await api('/api/admin/orders/'+o.id+'/status','POST'))));btn(actions,'Refill',async()=>{if(confirm('Minta refill?'))notify(JSON.stringify(await api('/api/admin/orders/'+o.id+'/refill','POST')))});btn(actions,'Cancel',async()=>{if(confirm('Mohon cancel di provider?'))notify(JSON.stringify(await api('/api/admin/orders/'+o.id+'/cancel','POST')))})}
+  }notify('Data berjaya dimuat.');
+ }catch(e){notify(e.message)}
+}
+async function loadServices(){
+ try{
+ const [items,config]=await Promise.all([fetch('/api/services').then(r=>r.json()),api('/api/admin/pricing')]);
+ $('services').replaceChildren();
+ for(const s of items){
+ const tr=$('services').insertRow();cell(tr,s.service);cell(tr,s.name);
+ const rate=tr.insertCell(),input=document.createElement('input');input.type='number';input.min='0';input.max='10000';input.step='0.01';input.value=config.pricing[s.service]?.markup??config.defaultMarkup;input.style.width='90px';rate.append(input);
+ const active=tr.insertCell(),check=document.createElement('input');check.type='checkbox';check.checked=config.pricing[s.service]?.enabled!==false;active.append(check);
+ btn(tr.insertCell(),'Simpan',async()=>{await api('/api/admin/pricing/'+s.service,'PUT',{markup:Number(input.value),enabled:check.checked});notify('Harga disimpan')});
+ } }catch(e){notify(e.message)}
+}
+$('load').onclick=load;$('servicesButton').onclick=loadServices;$('clear').onclick=()=>{$('token').value='';notify('Token dikosongkan')};
+</script></body></html>
