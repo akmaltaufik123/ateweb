@@ -9,7 +9,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const isGitHubPages = process.env.GITHUB_PAGES === 'true';
 
 export default defineConfig({
-  base: isGitHubPages ? '/ateweb/' : '/',
+  base: process.env.VITE_BASE_PATH || (isGitHubPages ? '/ateweb/' : '/'),
   plugins: [react()],
   resolve: {
     alias: {
@@ -19,7 +19,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:3001',
+        target: 'http://127.0.0.1:3000',
         changeOrigin: true,
       },
     },

@@ -1,0 +1,45 @@
+name: Booster validation
+on:
+  pull_request:
+  push:
+    branches: [feat/booster-whatsapp-secure-checkout]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.18.0
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: node --check server/index.js
+      - run: npm test
+      - run: npm run build
+        env:
+          VITE_BASE_PATH: /booster/
+      - run: npm audit --omit=dev --audit-level=moderate
+      - run: npx playwright install --with-deps chromium
+      - name: Browser smoke against mock provider
+        shell: bash
+        run: |
+          node server/tests/preview.js > "$RUNNER_TEMP/booster-preview.log" 2>&1 &
+          preview_pid=$!
+          trap 'kill "$preview_pid" 2>/dev/null || true' EXIT
+          for attempt in {1..30}; do
+            if grep -q 'Mock-only visual QA ready' "$RUNNER_TEMP/booster-preview.log"; then break; fi
+            sleep 1
+          done
+          grep -q 'Mock-only visual QA ready' "$RUNNER_TEMP/booster-preview.log"
+          npm run test:browser
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: booster-browser-qa
+          path: artifacts/qa/
+          retention-days: 3

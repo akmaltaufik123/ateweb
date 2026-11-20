@@ -54,7 +54,7 @@ export const PLATFORMS: PlatformInfo[] = [
 ];
 
 /** Group services by platform, unmatched go to "other" */
-export function groupByPlatform(services: { category: string }[]) {
+export function groupByPlatform<T extends { category: string }>(services: T[]) {
   const groups: Record<string, typeof services> = {};
   for (const p of PLATFORMS) {
     groups[p.key] = [];

@@ -49,6 +49,8 @@ export default function SmmPanel() {
         const data = await fetchServices();
         if (!cancelled) {
           setServices(data);
+          const first = PLATFORMS.find(p => data.some(s => p.match(s.category)));
+          if (first) setActivePlatform(first.key);
           setLoading(false);
         }
       } catch {
@@ -75,7 +77,7 @@ export default function SmmPanel() {
     const list = grouped[activePlatform] ?? [];
     if (!searchQuery.trim()) return list;
     const q = searchQuery.toLowerCase();
-    return list.filter((s) => s.name.toLowerCase().includes(q));
+    return list.filter((s) => [s.name, String(s.service), s.category].join(' ').toLowerCase().includes(q));
   }, [grouped, activePlatform, searchQuery]);
 
 
@@ -107,7 +109,7 @@ export default function SmmPanel() {
       <div
         aria-hidden="true"
         className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30"
-        style={{ backgroundImage: 'url(/bg-digital.png)' }}
+        style={{ backgroundImage: `url(${import.meta.env.BASE_URL}bg-digital.png)` }}
       />
       {/* Dark overlay for readability */}
       <div
@@ -254,15 +256,12 @@ function ServiceCard({ service, onSelect }: { service: SmmService; onSelect: () 
         )}
       </div>
 
-      {/* Price — MYR primary, USD secondary */}
+      {/* Price in MYR */}
       <div className="mb-4 flex items-baseline gap-2">
         <span className="text-[22px] font-semibold tracking-tight text-white">
           {price.myr}
         </span>
         <span className="text-[11px] text-white/30">/ 1000</span>
-        <span className="ml-auto text-[11px] text-white/25">
-          {price.usd}
-        </span>
       </div>
 
       {/* Stats grid */}

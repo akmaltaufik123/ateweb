@@ -45,3 +45,11 @@ coverage
 *.temp
 .cache
 .temp
+
+# Private persistent data and database sidecars
+/data/
+*.sqlite
+*.sqlite-*
+*.db
+*.db-*
+/artifacts/

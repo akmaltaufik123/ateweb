@@ -1,62 +1,23 @@
-import type { SmmService, OrderResponse, OrderStatus, BalanceResponse } from '@/types/smm';
-
-const BASE = '/api';
+import type { SmmService } from '@/types/smm';
 
 export async function fetchServices(): Promise<SmmService[]> {
-  const res = await fetch(`${BASE}/services`);
-  if (!res.ok) throw new Error('Failed to fetch services');
+  const res = await fetch('/api/services');
+  if (!res.ok) throw new Error('Services temporarily unavailable');
   return res.json();
 }
 
-export async function placeOrder(data: {
-  service: number;
-  link: string;
-  quantity: number;
-  comments?: string;
-  runs?: number;
-  interval?: number;
-}): Promise<OrderResponse> {
-  const res = await fetch(`${BASE}/order`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
-  if (!res.ok) throw new Error('Failed to place order');
-  return res.json();
-}
-
-export async function checkOrderStatus(order: number): Promise<OrderStatus> {
-  const res = await fetch(`${BASE}/status`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ order }),
-  });
-  if (!res.ok) throw new Error('Failed to check order status');
-  return res.json();
-}
-
-export async function fetchBalance(): Promise<BalanceResponse> {
-  const res = await fetch(`${BASE}/balance`);
-  if (!res.ok) throw new Error('Failed to fetch balance');
-  return res.json();
-}
-
-export async function requestRefill(order: number): Promise<unknown> {
-  const res = await fetch(`${BASE}/refill`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ order }),
-  });
-  if (!res.ok) throw new Error('Failed to request refill');
-  return res.json();
-}
-
-export async function cancelOrder(orders: string): Promise<unknown> {
-  const res = await fetch(`${BASE}/cancel`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ orders }),
-  });
-  if (!res.ok) throw new Error('Failed to cancel order');
-  return res.json();
+export interface CheckoutDetails { service: number; link: string; quantity: number; comments?: string }
+export interface CheckoutResult { id: string; amountMYR: number; status: string; whatsappUrl: string }
+export async function createCheckout(details: CheckoutDetails): Promise<CheckoutResult> {
+  const body = JSON.stringify(details);
+  // Retain the key after a lost response, refresh, or modal close. Never retry with a new key.
+  const saved = sessionStorage.getItem('booster-checkout');
+  let attempt: { body: string; key: string } | null = null;
+  try { attempt = saved ? JSON.parse(saved) : null; } catch { /* replace corrupt browser state */ }
+  if (!attempt || attempt.body !== body) attempt = { body, key: crypto.randomUUID() };
+  sessionStorage.setItem('booster-checkout', JSON.stringify(attempt));
+  const response = await fetch('/api/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Idempotency-Key': attempt.key }, body });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || 'Tempahan tidak dapat direkodkan. Cuba lagi.');
+  return data;
 }

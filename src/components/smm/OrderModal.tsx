@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { X, AlertCircle, ShoppingCart } from 'lucide-react';
 import type { SmmService } from '@/types/smm';
 import { formatPrice } from '@/utils/currency';
+import { createCheckout, type CheckoutResult } from '@/api/smm';
 
 interface Props {
   service: SmmService;
@@ -14,6 +15,15 @@ export default function OrderModal({ service, onClose }: Props) {
   const [comments, setComments] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [result, setResult] = useState<CheckoutResult | null>(null);
+  const dialog = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const previous = document.activeElement as HTMLElement | null;
+    const overflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    dialog.current?.querySelector<HTMLElement>('input,button')?.focus();
+    return () => { document.body.style.overflow = overflow; previous?.focus(); };
+  }, []);
 
   const rate = parseFloat(service.rate);
   const totalCost = formatPrice((rate * quantity) / 1000);
@@ -39,9 +49,8 @@ export default function OrderModal({ service, onClose }: Props) {
 
     setSubmitting(true);
     try {
-      const res = await fetch('/api/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ service: service.service, link: link.trim(), quantity, comments }) });
-      if (!res.ok) throw new Error('Tempahan tidak dapat direkodkan. Cuba lagi.');
-      const data: { whatsappUrl: string } = await res.json();
+      const data = await createCheckout({ service: service.service, link: link.trim(), quantity, comments });
+      setResult(data);
       window.location.href = data.whatsappUrl;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Ralat tempahan');
@@ -53,16 +62,25 @@ export default function OrderModal({ service, onClose }: Props) {
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/70 backdrop-blur-sm"
-        onClick={onClose}
+        onClick={() => { if (!submitting) onClose(); }}
       />
 
       {/* Modal — matching GatewayCard style */}
-      <div className="relative w-full max-w-md rounded-[24px] border border-red-500/20 bg-[rgba(17,16,15,0.9)] p-[24px] backdrop-blur-[20px] shadow-2xl sm:rounded-[28px] sm:p-[28px]">
+      <div ref={dialog} role="dialog" aria-modal="true" aria-labelledby="order-title" onKeyDown={e => {
+        if (e.key === 'Escape' && !submitting) onClose();
+        if (e.key !== 'Tab') return;
+        const controls = dialog.current?.querySelectorAll<HTMLElement>('button:not(:disabled), input, textarea, a[href]');
+        if (!controls?.length) return;
+        const first = controls[0], last = controls[controls.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }} className="relative max-h-[90dvh] w-full max-w-md overflow-y-auto rounded-[24px] border border-red-500/20 bg-[rgba(17,16,15,0.9)] p-[24px] backdrop-blur-[20px] shadow-2xl sm:rounded-[28px] sm:p-[28px]">
         {/* Red accent line at top */}
         <div className="absolute left-6 right-6 top-0 h-[1px] bg-gradient-to-r from-transparent via-red-500/60 to-transparent" />
         {/* Close button */}
         <button
-          onClick={onClose}
+          onClick={() => { if (!submitting) onClose(); }}
+          aria-label="Close order"
           className="absolute right-4 top-4 rounded-[8px] border border-white/[0.06] bg-white/[0.04] p-1.5 text-white/30 transition-colors hover:bg-white/[0.08] hover:text-white/60"
         >
           <X size={16} />
@@ -73,7 +91,7 @@ export default function OrderModal({ service, onClose }: Props) {
           <p className="text-[9px] font-semibold tracking-[0.3em] text-white/35">
             NEW ORDER
           </p>
-          <h3 className="mt-2 text-[15px] font-medium leading-snug text-white/85">
+          <h3 id="order-title" className="mt-2 text-[15px] font-medium leading-snug text-white/85">
             {service.name}
           </h3>
           <p className="mt-1 text-[11px] text-white/35">
@@ -87,7 +105,6 @@ export default function OrderModal({ service, onClose }: Props) {
             <span className="text-white/35">Rate per 1000</span>
             <div className="text-right">
               <span className="font-medium text-white/75">{ratePrice.myr}</span>
-              <span className="ml-1.5 text-[10px] text-white/25">{ratePrice.usd}</span>
             </div>
           </div>
           <div className="my-2 h-px bg-white/[0.05]" />
@@ -95,21 +112,22 @@ export default function OrderModal({ service, onClose }: Props) {
             <span className="text-[12px] text-white/35">Estimated total</span>
             <div className="text-right">
               <span className="text-[18px] font-semibold text-white">{totalCost.myr}</span>
-              <span className="ml-1.5 text-[11px] text-white/25">{totalCost.usd}</span>
             </div>
           </div>
         </div>
 
         <p className="mb-4 text-[12px] text-white/60">Tempahan akan dihantar ke WhatsApp Business. Harga akhir dan bayaran disahkan secara manual; tiada pesanan upstream dibuat secara automatik.</p>
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        {result ? <div className="space-y-3 break-words text-sm text-white/80"><p>Tempahan: {result.id}</p><p>Harga disimpan: RM {result.amountMYR.toFixed(2)}</p><a className="block underline" href={result.whatsappUrl}>Teruskan ke WhatsApp Business</a><p>Belum dibayar. Sila hubungi kami dengan rujukan ini.</p><button type="button" className="underline" onClick={() => { sessionStorage.removeItem('booster-checkout'); setResult(null); }}>Mulakan tempahan baharu</button></div> : <form onSubmit={handleSubmit} className="space-y-4">
           {/* Link */}
           <div>
-            <label className="mb-1.5 block text-[11px] font-medium tracking-wide text-white/40">
+            <label htmlFor="order-link" className="mb-1.5 block text-[11px] font-medium tracking-wide text-white/40">
               LINK
             </label>
             <input
               type="url"
+              id="order-link"
+              maxLength={2048}
               value={link}
               onChange={(e) => setLink(e.target.value)}
               placeholder="https://instagram.com/username"
@@ -120,13 +138,16 @@ export default function OrderModal({ service, onClose }: Props) {
 
           {/* Quantity */}
           <div>
-            <label className="mb-1.5 block text-[11px] font-medium tracking-wide text-white/40">
+            <label htmlFor="order-quantity" className="mb-1.5 block text-[11px] font-medium tracking-wide text-white/40">
               QUANTITY
             </label>
             <input
               type="number"
+              id="order-quantity"
               value={quantity}
               onChange={(e) => setQuantity(Number(e.target.value))}
+              readOnly={needsComments}
+              step={1}
               min={service.min}
               max={service.max}
               className="w-full rounded-[9px] border border-white/[0.08] bg-white/[0.04] px-3.5 py-2.5 text-[13px] text-white outline-none transition-colors focus:border-white/[0.15]"
@@ -137,7 +158,7 @@ export default function OrderModal({ service, onClose }: Props) {
             </p>
             {/* Quick select buttons */}
             <div className="mt-2.5 flex flex-wrap gap-1.5">
-              {[
+              {!needsComments && [
                 { label: 'Min', val: service.min },
                 { label: '1K', val: Math.min(1000, service.max) },
                 { label: '5K', val: Math.min(5000, service.max) },
@@ -159,12 +180,14 @@ export default function OrderModal({ service, onClose }: Props) {
           {/* Comments (for custom comment services) */}
           {needsComments && (
             <div>
-              <label className="mb-1.5 block text-[11px] font-medium tracking-wide text-white/40">
+              <label htmlFor="order-comments" className="mb-1.5 block text-[11px] font-medium tracking-wide text-white/40">
                 COMMENTS
               </label>
               <textarea
+                id="order-comments"
+                maxLength={5000}
                 value={comments}
-                onChange={(e) => setComments(e.target.value)}
+                onChange={(e) => { setComments(e.target.value); setQuantity(e.target.value.split(/\r?\n/).filter(line => line.trim()).length); }}
                 placeholder="Great post!&#10;Amazing content!&#10;Love this!"
                 rows={3}
                 className="w-full resize-none rounded-[9px] border border-white/[0.08] bg-white/[0.04] px-3.5 py-2.5 text-[13px] text-white placeholder:text-white/20 outline-none transition-colors focus:border-white/[0.15]"
@@ -190,7 +213,7 @@ export default function OrderModal({ service, onClose }: Props) {
           >
             <><ShoppingCart size={14} /> {submitting ? "Merekod tempahan..." : "Tempah melalui WhatsApp — " + totalCost.myr}</>
           </button>
-        </form>
+        </form>}
       </div>
     </div>
   );

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Menu, X } from 'lucide-react';
 
 const NAV_LINKS = [
-  { label: 'SMM Panel', href: 'https://www.akmaltaufikenterprise.my/booster' },
+  { label: 'SMM Panel', href: '#smm-panel' },
   { label: 'Services', href: '#services' },
   { label: 'AI API', href: '#ai-api' },
   { label: 'ATEGateway', href: '#ategateway' },
@@ -103,7 +103,7 @@ export default function Navbar() {
                 Customer Login
               </a>
               <a
-                href="#get-started"
+                href="#smm-panel"
                 className="whitespace-nowrap rounded-[8px] bg-[#E9E9E9] px-3 py-2.5 text-[13px] font-semibold text-[#0A0707] transition-colors hover:bg-white xl:px-5 xl:text-[14px]"
               >
                 Get Started
@@ -191,7 +191,7 @@ export default function Navbar() {
                 Customer Login
               </a>
               <a
-                href="#get-started"
+                href="#smm-panel"
                 tabIndex={open ? 0 : -1}
                 onClick={() => setOpen(false)}
                 className="block rounded-[8px] bg-[#E9E9E9] px-4 py-3.5 text-center text-[15px] font-semibold text-[#0A0707] transition-colors hover:bg-white"
